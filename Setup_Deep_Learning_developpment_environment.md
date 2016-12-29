@@ -7,5 +7,6 @@ set up your own DL environement based on docker containers
 - 2. Installing Docker 
 - 3. Installing Jupyterhub, your development API 
 - 4 : Installing a Keras kernel for Jupyter
-- 5: Build an image
-- 6 : Run your container as a service. 
+- 5: Build a docker image
+- 6 : Share a host directory with the container
+- 7 : Run your container as a service. 
