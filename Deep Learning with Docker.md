@@ -4,15 +4,53 @@
 set up your own DL environement based on docker containers 
 
 ## Index 
+
 - 1. Introduction 
-	* why Docker 
+	* Why Deep Learning ? 
+	* Why Docker ?
+	* The fast track 
 - 2. Install Docker 
-- 2.bis. The fast track 
-- 3. Install Jupyterhub, your development API 
+	* What is Docker ? 
+	* Docker installation
+	* Run your container
+- 3. Install Jupyterhub
+	* What is Jupyterhub ? 
+	* Jupyterhub installation 
+	* Jupyterhub configuration
 - 4 : Installing a Keras kernel for Jupyter
-- 5: Build a docker image
-- 6 : Share a host directory with the container
-- 7 : Run your container as a service. 
+	* Virtual environments with Conda
+	* installing Keras 
+	* Using Keras in Jupyter 
+- 5: Bonus : docker tips for improving your container
+	* Create your Docker image
+	* Share a host directory with your container 
+	* run your container as a service 
+
+---------------------------------------
+
+
+
+## 1. Introduction 
+ ### Why Deep Learning ? 
+	* Why Docker ?
+	* The fast track 
+- 2. Install Docker 
+	* What is Docker ? 
+	* Docker installation
+	* Run your container
+- 3. Install Jupyterhub
+	* What is Jupyterhub ? 
+	* Jupyterhub installation 
+	* Jupyterhub configuration
+- 4 : Installing a Keras kernel for Jupyter
+	* Virtual environments with Conda
+	* installing Keras 
+	* Using Keras in Jupyter 
+- 5: Bonus : docker tips for improving your container
+	* Create your Docker image
+	* Share a host directory with your container 
+	* run your container as a service 
+
 
 
 ```
