@@ -1,7 +1,7 @@
 
-## Setup your own Deep Learning development environment using Docker
+## Create your own Deep Learning development environment using Docker
 
-set up your own DL environement based on docker containers 
+Create up your own DL environement based on docker containers 
 
 ## Index 
 
