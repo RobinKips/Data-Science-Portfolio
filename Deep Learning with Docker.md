@@ -8,6 +8,7 @@ Create up your own DL environement based on docker containers
 - 1. Introduction 
 	* Why Deep Learning ? 
 	* Why Docker ?
+    * Prerequisite
 	* The fast track 
 - 2. Install Docker 
 	* What is Docker ? 
@@ -50,7 +51,23 @@ We will use the docker container technology in order to easily build an isolated
 In addition, Docker is a particularly trending technology that is worth trying, as it will help you with any kind of application development and deployment. 
 
 
+### Prerequisite  
+
+All you need to get started is a Linux machine. If you do not have any, I encourage you to launch a cloud instance with **Amazon Web Service** (AWS) . Even though optimal Deep Learning environment are based on GPU architectures, using a free AWS machine is enough to get you started and adress problems of modes complexity. 
+
+This tutorial is designed for being used with **Red Hat Entreprise Linux** or **CentOS** distributions. 
+
+
 ### The fast track 
+
+If all your are interested into is getting and up and running development platform, you can use the "fast track" and directly use the magic command lines : 
+
+```
+#install docker
+#pull my image
+#run my image
+```
+
 
 ## 2. Install Docker 
 ### What is Docker ? 
