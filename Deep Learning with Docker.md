@@ -28,16 +28,36 @@ Create up your own DL environement based on docker containers
 
 ---------------------------------------
 
-
-
 ## 1. Introduction 
 
 ### Why Deep Learning ? 
+
+Appart from being surrounder by a lot of hype, **Deep Learning** (DL) is a powerfull set of methods that will help you adress many complex problematic. One of the most famous and groundbreaking application of Deep Learning is related to the field of **Computer Vision** and image classification problems. 
+
+Classifying an image is a difficult task for computers, that have to face many complex issues : viewpoint variation, illumination conditions, etc. Deep Learning techniques have proven particularly powerfull for adressing such issues. 
+
+![alt text](http://cs231n.github.io/assets/challenges.jpeg "computer vision challenging issues" )
+
+
+This tutorial will help you to get started with Deep Learning by creating your own DL environment from scratch. 
+
 ### Why Docker ?
+
+One important difficulty that comes with Deep Learning is the environment setup. There is a variety of DL oriented libraries, but they all require very specific dependances which makes them difficult to plug to your already existing development environment. That is where **Docker** will be of great help. 
+
+We will use the docker container technology in order to easily build an isolated Deep Learning platform, and preserve your current environment from any regression. 
+
+In addition, Docker is a particularly trending technology that is worth trying, as it will help you with any kind of application development and deployment. 
+
+
 ### The fast track 
 
 ## 2. Install Docker 
 ### What is Docker ? 
+
+![alt text](https://images.mondedie.fr/s9ZCIrQ4/ErDsRisu.png "Docker Architecture illustration")
+
+
 ### Docker installation
 ### Run your container
 
