@@ -101,23 +101,12 @@ NOTE : We will add access to a shared volume for the container for use in produc
 
 	
 ## 3. Install Jupyterhub
-### What is Jupyterhub ? 
-### Jupyterhub installation 
-
-## 1. Prerequisite
-
-### 1.1.  Start and setup the container 
-
-First, use a docker container to build the Jupyterhub image .Run a container from a raw centos image, and then connect to the container : 
 
 
 
-Notice that the port 8000 of the container is mapped to the port 8081 of the host. 
-NOTE : We will add access to a shared volume for the container for use in production. 
 
 
-
-### 1.2.  Anaconda installation 
+### Anaconda installation 
 
 Install several compenents for later needs : 
 
@@ -158,9 +147,8 @@ Setup an alias for anaconda pip3 in order to facilitate python libraries managem
 alias pip3='/opt/anadonda/bin/pip'
 
 ```
-
-
-### 1.3. : Other prerequisite installations
+### Jupyterhub installation 
+#### prerequisite installations
 
 First install **nodejs/npm** (Node Package Manager). For RHEL, Node.js is available from the NodeSource Enterprise Linux and Fedora binary distributions repository. 
 ```
@@ -175,24 +163,23 @@ Then, install the **configurable http proxy** used by Jupyterhub :
 npm install -g configurable-http-proxy
 ```
 
-## 2. Jupyterhub installation : 
 
-### 2.1. Installing Jupyterhub  : 
+### Installing Jupyterhub  : 
 
 
 Install jupyterhub using pip3 : 
 ```
-pip3 install jupyterhub 
+/opt/anaconda/bin/pip install jupyterhub
 ```
 
 Then we must upgrade the jupyter notebook. There is a small workarround here in order to avoid a bug in upgrading python setuptools using anaconda pip. Using the `--ignore-installed` argument we ignore the installed package  and force the  reinstalling instead. 
 ```
-pip3 install --upgrade --ignore-installed  setuptools
+opt/anaconda/bin/pip install --upgrade --ignore-installed  setuptools
 ```
 
 You can now safely upgrade the notebook : 
 ```
-pip3 install --upgrade notebook
+opt/anaconda/bin/pip install --upgrade notebook
 ```
 
 Setup an alias for jupyterhub binaries . Add the following line to ` /root/.bashrc`
@@ -205,6 +192,8 @@ alias jupyterhub='/opt/anadonda/bin/jupyterhub'
 You can check that jupyterhub is starting correctly. 
 
 ```
+mkdir -p /srv/jupyterhub/
+cd /srv/jupyterhub
 jupyterhub --no-ssl
 ```
 However you cannot access jupyterhub so far. By default it opens to the  port 8000 of the container that is not accessible by default. 
