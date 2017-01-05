@@ -185,8 +185,7 @@ opt/anaconda/bin/pip install --upgrade notebook
 Setup an alias for jupyterhub binaries . Add the following line to ` /root/.bashrc`
 
 ```
-alias jupyterhub='/opt/anadonda/bin/jupyterhub'
-
+echo 'alias jupyterhub="/opt/anaconda/bin/jupyterhub"' >> ~/.bashrc 
 ```
 
 You can check that jupyterhub is starting correctly. 
@@ -201,12 +200,26 @@ However you cannot access jupyterhub so far. By default it opens to the  port 80
 
 ### 2.2. Configuring Jupyterhub  : 
 
+add users : 
+
+
+
 Generate default configuration file for Jupyterhub in `/etc/jupyterhub/'
 
 ```
 mkdir /etc/jupyterhub 
 cd /etc/jupyterhub 
 jupyterhub --generate-config
+
+yum install -y  openssl
+#autisigned certificate
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/my_key.pem -out /etc/ssl/my_cert.pem
+```
+
+```
+jupyterhub --ip 10.0.1.2 --port 443 --ssl-key /etc/ssl/my_key.pem --ssl-cert /etc/ssl/my_cert.pem
+jupyterhub --ip 10.0.1.2 --port 443 --ssl-key /etc/ssl/my_key.pem --ssl-cert /etc/ssl/my_cert.pem
+
 ```
 
 ### Build a Jupyter docker image : 
