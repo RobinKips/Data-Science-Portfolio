@@ -83,7 +83,7 @@ sudo yum install -y docker
 #start docker service
 sudo service docker start
 #add ec2 user to the docker group to avoir using sudo 
-sudo usermod -a -G docker ec2-use
+sudo usermod -a -G docker ec2-user
 ```
 
 ### Run your container
@@ -91,8 +91,8 @@ sudo usermod -a -G docker ec2-use
 First, use a docker container to build the Jupyterhub image .Run a container from a raw centos image, and then connect to the container 
 
 ```
-sudo docker run --name jupyter_deploy -dti centos
-docker exec -it jupyter_deploy bash
+docker run --name DL_platform -dti centos 
+docker exec -it DL_platform bash
 
 ```
 
@@ -110,11 +110,7 @@ NOTE : We will add access to a shared volume for the container for use in produc
 
 First, use a docker container to build the Jupyterhub image .Run a container from a raw centos image, and then connect to the container : 
 
-```
-sudo docker run --name jupyter_deploy -dti centos
-docker exec -it jupyter_deploy bash
 
-```
 
 Notice that the port 8000 of the container is mapped to the port 8081 of the host. 
 NOTE : We will add access to a shared volume for the container for use in production. 
@@ -126,17 +122,21 @@ NOTE : We will add access to a shared volume for the container for use in produc
 Install several compenents for later needs : 
 
 ```
-yum update 
-yum install wget 
-yum install bzip2 
+yum update -y  
+yum  install -y wget bzip2
 ```
 
 Install Anaconda. Contains Python 3, advanced python environment manager, and all the most popular data science libraries. 
 
 ```
-cd /tmp
-wget https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh
-bash Anaconda-2.1.0-Linux-x86_64.sh
+#download Anaconda
+wget --quiet http://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O /tmp/Anaconda3-4.1.1-Linux-x86_64.sh 
+#make the script executable 
+chmod +x /tmp/Anaconda3-4.1.1-Linux-x86_64.sh
+#installing to /opt/anaconda
+/tmp/Anaconda3-4.1.1-Linux-x86_64.sh  -b -p /opt/anaconda
+#cleanup
+rm -f /tmp/*
 ```
 
 The recommanded installation path is `opt/anaconda` ( NOTE : prefer `/usr/local/share/`for the next build,  make sure correspinding changes in alias are done) 
