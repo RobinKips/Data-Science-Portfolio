@@ -76,6 +76,16 @@ If all your are interested into is getting and up and running development platfo
 
 
 ### Docker installation
+```
+sudo yum update -y
+#install docker 
+sudo yum install -y docker
+#start docker service
+sudo service docker start
+#add ec2 user to the docker group to avoir using sudo 
+sudo usermod -a -G docker ec2-use
+```
+
 ### Run your container
 
 First, use a docker container to build the Jupyterhub image .Run a container from a raw centos image, and then connect to the container 
