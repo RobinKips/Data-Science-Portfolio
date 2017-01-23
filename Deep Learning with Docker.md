@@ -91,7 +91,7 @@ sudo usermod -a -G docker ec2-user
 First, use a docker container to build the Jupyterhub image .Run a container from a raw centos image, and then connect to the container 
 
 ```
-docker run --name DL_platform -dti -p 443:443 centos 
+docker run --name DL_platform -dti -p 443:443 -v /home/share_docker:/home/share_docker:z centos 
 docker exec -it DL_platform bash
 
 ```
@@ -187,15 +187,6 @@ Setup an alias for jupyterhub binaries . Add the following line to ` /root/.bash
 echo 'alias jupyterhub="/opt/anaconda/bin/jupyterhub"' >> ~/.bashrc 
 ```
 
-You can check that jupyterhub is starting correctly. 
-
-```
-mkdir -p /srv/jupyterhub/
-cd /srv/jupyterhub
-jupyterhub --no-ssl
-```
-However you cannot access jupyterhub so far. By default it opens to the  port 8000 of the container that is not accessible by default. 
-
 
 ### 2.2. Configuring Jupyterhub  : 
 
@@ -216,9 +207,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/my_key.pem 
 ```
 
 ```
-jupyterhub --ip 10.0.1.2 --port 443 --ssl-key /etc/ssl/my_key.pem --ssl-cert /etc/ssl/my_cert.pem
-jupyterhub --ip 10.0.1.2 --port 443 --ssl-key /etc/ssl/my_key.pem --ssl-cert /etc/ssl/my_cert.pem
-
+jupyterhub --port 443 --ssl-key /etc/ssl/my_key.pem --ssl-cert /etc/ssl/my_cert.pem
 ```
 
 ### Build a Jupyter docker image : 
@@ -247,7 +236,7 @@ Then, create a share docker volume on the host to ensure data persistance. When 
 
 Use the following command to run the jupyterhub container : 
 ```
-docker run -tid --name jupyter_deploy -p 8081:8000 -v /home/share_init:/home/share_init jupyterhub_img_v1 
+docker run -tid --name jupyter_deploy -p 8081:8000 -v /home/share_init:/home/share_init:z jupyterhub_img_v1 
 ```
 
 The port 8081 of the host is binded to the port 8000 of the container, the default port for jupyterhub. When writing data in `/home/share_init` from Jupyter, the data will be written in the host to `/home/share_init`. Using the same volume option with another container allows to access the same shared folder. 
@@ -301,7 +290,12 @@ RUN curl --silent --location https://rpm.nodesource.com/setup_4.x | bash - && \
 	npm install -g configurable-http-proxy@1.3.0 && \ 
 	opt/anaconda/bin/pip install jupyterhub==0.6.1  && \ 
 	opt/anaconda/bin/pip install --upgrade --ignore-installed  setuptools==28.3.0 && \ 
-	opt/anaconda/bin/pip install --upgrade notebook==4.2.3 
+	opt/anaconda/bin/pip install --upgrade notebook==4.2.3 && \
+	mkdir /etc/jupyterhub && \
+	cd /etc/jupyterhub && \
+	jupyterhub --generate-config && \
+	yum install -y  openssl && \
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/my_key.pem -out /etc/ssl/my_cert.pem
 
 # install keras kernel
 RUN /opt/anaconda/bin/conda create --name keras_kernel python=3.5.2  -y && \
@@ -334,5 +328,5 @@ WORKDIR /srv/jupyterhub/
 EXPOSE 8000
  
 #start jupyterhub 
-CMD ["jupyterhub", "-f", "jupyterhub_config.py"  "--no-ssl"]
+CMD ["jupyterhub","--port 443", "--ssl-key", "/etc/ssl/my_key.pem", "--ssl-cert", "/etc/ssl/my_cert.pem", "-f", "jupyterhub_config.py"]
 ```
