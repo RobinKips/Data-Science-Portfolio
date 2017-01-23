@@ -91,12 +91,11 @@ sudo usermod -a -G docker ec2-user
 First, use a docker container to build the Jupyterhub image .Run a container from a raw centos image, and then connect to the container 
 
 ```
-docker run --name DL_platform -dti centos 
+docker run --name DL_platform -dti -p 443:443 centos 
 docker exec -it DL_platform bash
 
 ```
 
-Notice that the port 8000 of the container is mapped to the port 8081 of the host. 
 NOTE : We will add access to a shared volume for the container for use in production. 
 
 	
