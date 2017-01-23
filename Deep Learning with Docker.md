@@ -127,25 +127,11 @@ chmod +x /tmp/Anaconda3-4.1.1-Linux-x86_64.sh
 rm -f /tmp/*
 ```
 
-The recommanded installation path is `opt/anaconda` ( NOTE : prefer `/usr/local/share/`for the next build,  make sure correspinding changes in alias are done) 
-
-Once the installation is complete, erase the installation files : 
-```
-rm bash Anaconda-2.1.0-Linux-x86_64.sh
-```
-
 Add anaconda binaries repository to yhour path. All the user that want to use anaconda must do so. 
 ```
 echo 'PATH=$PATH:/opt/anaconda/bin' >> ~/.bashrc
 ```
 
-
-Setup an alias for anaconda pip3 in order to facilitate python libraries management. Add the following line to ` /root/.bashrc`
-
-```
-alias pip3='/opt/anadonda/bin/pip'
-
-```
 ### Jupyterhub installation 
 #### prerequisite installations
 
@@ -154,19 +140,14 @@ First install **nodejs/npm** (Node Package Manager). For RHEL, Node.js is availa
 curl --silent --location https://rpm.nodesource.com/setup_4.x | bash -
 yum install -y nodejs
 ```
-
-In order to allow npm to access repositories you must set  npm proxy, using the following command line : 
-
 Then, install the **configurable http proxy** used by Jupyterhub : 
 ```
 npm install -g configurable-http-proxy
 ```
 
-
 ### Installing Jupyterhub  : 
 
-
-Install jupyterhub using pip3 : 
+Install jupyterhub 
 ```
 /opt/anaconda/bin/pip install jupyterhub
 ```
@@ -187,11 +168,7 @@ Setup an alias for jupyterhub binaries . Add the following line to ` /root/.bash
 echo 'alias jupyterhub="/opt/anaconda/bin/jupyterhub"' >> ~/.bashrc 
 ```
 
-
 ### 2.2. Configuring Jupyterhub  : 
-
-add users : 
-
 
 
 Generate default configuration file for Jupyterhub in `/etc/jupyterhub/'
@@ -206,10 +183,24 @@ yum install -y  openssl
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/my_key.pem -out /etc/ssl/my_cert.pem
 ```
 
+You can start the jupyterhub server with the following command :  
+
 ```
 jupyterhub --port 443 --ssl-key /etc/ssl/my_key.pem --ssl-cert /etc/ssl/my_cert.pem
 ```
+the jupyterhub server should now start to listen on the port 443 of your container. Check that this port is indeed binded to the host. 
 
+## Installing keras kernel : 
+
+```
+/opt/anaconda/bin/conda create --name keras_kernel python=3.5.2  -y 
+source /opt/anaconda/bin/activate keras_kernel 
+/opt/anaconda/bin/conda install  -y theano=0.8.2
+/opt/anaconda/bin/conda install -y h5py=2.6.0 
+pip install keras==1.1.1 
+/opt/anaconda/bin/conda install -y scikit-learn=0.18.1 pandas=0.19.1 ipykernel=4.5.1 matplotlib=1.5.3 pillow=3.4.1
+source /opt/anaconda/bin/deactivate 
+```
 ### Build a Jupyter docker image : 
 
 Now that we corrrectly installed jupyterhub in a containner we can save it as a docker image. Thus, we will be able to use this image to start a new container running jupyterhub. We save the container jupyter_deploy as the image jupyter_img_v1.  
