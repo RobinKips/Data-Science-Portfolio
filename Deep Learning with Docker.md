@@ -91,7 +91,7 @@ sudo usermod -a -G docker ec2-user
 First, use a docker container to build the Jupyterhub image .Run a container from a raw centos image, and then connect to the container 
 
 ```
-docker run --name DL_platform -dti -p 443:443 -v /home/share_docker:/home/share_docker:z centos 
+docker run --name DL_platform -dti -p 443:443 centos 
 docker exec -it DL_platform bash
 
 ```
@@ -291,12 +291,9 @@ RUN curl --silent --location https://rpm.nodesource.com/setup_4.x | bash - && \
 	opt/anaconda/bin/pip install jupyterhub==0.6.1  && \ 
 	opt/anaconda/bin/pip install --upgrade --ignore-installed  setuptools==28.3.0 && \ 
 	opt/anaconda/bin/pip install --upgrade notebook==4.2.3 && \
-	mkdir /etc/jupyterhub && \
-	cd /etc/jupyterhub && \
-	jupyterhub --generate-config && \
 	yum install -y  openssl && \
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/my_key.pem -out /etc/ssl/my_cert.pem
-
+	
 # install keras kernel
 RUN /opt/anaconda/bin/conda create --name keras_kernel python=3.5.2  -y && \
 	source /opt/anaconda/bin/activate keras_kernel && \
