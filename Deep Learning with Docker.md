@@ -121,7 +121,7 @@ Now that our container is up and running start by installing Jupyterub.
 
 The **Jupyter** is a web application that allows you to create and share documents that contain live code, equations, visualizations and explanatory text. Using **Jupyterhub** allows you to run a multi user Jupyter server.
 A very usefull feature of Jupyter is the use of **kernels**. They can be considered as isolated virtual environement in which you can execute several language programming. Thus, you can create a kernel for your Python 3 scripts, and another for your R or Julia script. 
-![alt text](https://www.google.fr/url?sa=i&rct=j&q=&esrc=s&source=imgres&cd=&cad=rja&uact=8&ved=0ahUKEwjbv9XMi-jRAhUHnRoKHWJ8A1kQjRwIBw&url=https%3A%2F%2Fwww.dataquest.io%2Fblog%2Fjupyter-notebook-tips-tricks-shortcuts%2F&psig=AFQjCNFTPn1jKWo9eJ-WNMJIU4paD_UbJw&ust=1485804599853218)
+![alt text](https://www.dataquest.io/blog/images/jupyter/interface-screenshot.png)
 ### Anaconda installation 
 
 For installing Jupyter and creating python environment we will use the very popular **Anaconda** python distribution
