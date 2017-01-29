@@ -175,14 +175,16 @@ opt/anaconda/bin/pip install --upgrade notebook
 
 You can now start your Jupyterhub server with the following command line : 
 ```
+cd /srv/
 /opt/anaconda/bin/jupyterhub --no-ssl
 ```
 By default, the Jupyterhub server is configured on port 8000. You can access it from `http://yourdomainname:8000` and must login with a unix acount existing in the container. You can create new accounts with the `useradd myuser` command and edit the password with `passwd myuser`. 
 
 ![alt text](https://nb4799.neu.edu/wordpress/wp-content/uploads/2015/05/787.png)
 
-## Installing keras kernel : 
+## 4. Install a Keras Kernel
 
+### Virtual environment with conda : 
 ```
 /opt/anaconda/bin/conda create --name keras_kernel python=3.5.2  -y 
 source /opt/anaconda/bin/activate keras_kernel 
@@ -192,53 +194,9 @@ pip install keras==1.1.1
 /opt/anaconda/bin/conda install -y scikit-learn=0.18.1 pandas=0.19.1 ipykernel=4.5.1 matplotlib=1.5.3 pillow=3.4.1
 source /opt/anaconda/bin/deactivate 
 ```
-### Build a Jupyter docker image : 
+### Install keras
 
-Now that we corrrectly installed jupyterhub in a containner we can save it as a docker image. Thus, we will be able to use this image to start a new container running jupyterhub. We save the container jupyter_deploy as the image jupyter_img_v1.  
-
-commit jupyter_deploy jupyterhub_img_v1 
-
-
-
-
-## 3. Running the Jupyterhub container  : 
-
-### Open a port on the host 
-
-For deploying the jupyterhub, **bind a container port to an host port**. First, we need to open a port on the host machine that runs the docker deamon. Here we open port 8081 : 
-
-```
-firewall-cmd --permanent --zone=public --add-port=3389/tcp
-firewall-cmd --reload
-```
-
-Then, create a share docker volume on the host to ensure data persistance. When using the `docker volume create`command, we can attribute a name to a docker volume for easy volume management. However the data will be on the host by default at : `var/lib/docker/volumes/<volumename>/_data`. It is not currently possible to specify path, even though the workarround `docker volume create --opt type=none --opt device=<host path> --opt o=bind` could work. Instead, we choose to manually mount a path on the Docker host’s filesystem as a volume inside the container. 
-
-### Run a new  Jupyterhub container : 
-
-Use the following command to run the jupyterhub container : 
-```
-docker run -tid --name jupyter_deploy -p 8081:8000 -v /home/share_init:/home/share_init:z jupyterhub_img_v1 
-```
-
-The port 8081 of the host is binded to the port 8000 of the container, the default port for jupyterhub. When writing data in `/home/share_init` from Jupyter, the data will be written in the host to `/home/share_init`. Using the same volume option with another container allows to access the same shared folder. 
-
-Finally, manually start the jupyterhub server connecting to the docker : 
-
-```
-#from the host : 
-docker exec -it jupyter_deploy bash 
-
-#from the container : 
-cd /srv
-jupyterhub --no-ssl
-```
-The service is started from `/srv` since the files `jupyterhub.sqlite` and `jupyterhub_cookie_secret` are created in the folder from where jupyterhub is started. Deleting these files will result in disconecting the users. 
-
-### Create the users manually 
-
-Jupyterhub allows to run a multi-user notebook server. Thus, users must be created from the os hosting jupyterhub. You can  create users manually using `useradd user_1` and then set the corresponding pasword with `passwd user_1`. 
-
+### Using Keras in Jupyterhub : 
 
 
 ### Jupyterhub configuration
@@ -246,9 +204,9 @@ Jupyterhub allows to run a multi-user notebook server. Thus, users must be creat
 	* Virtual environments with Conda
 	* installing Keras 
 	* Using Keras in Jupyter 
+	
 - 5: Bonus : docker tips for improving your container
 	* Create your Docker image
-	* Share a host directory with your container 
 	* run your container as a service 
 
 
