@@ -8,11 +8,12 @@ Create up your own DL environement based on docker containers
 - 1. Introduction 
 	* Why Deep Learning ? 
 	* Why Docker ?
-    * Prerequisite
-	* The fast track 
+   	* Prerequisite
+
 - 2. Install Docker 
 	* What is Docker ? 
 	* Docker installation
+	* Shared volume
 	* Run your container
 - 3. Install Jupyterhub
 	* What is Jupyterhub ? 
@@ -39,7 +40,6 @@ Classifying an image is a difficult task for computers, that have to face many c
 
 ![alt text](http://cs231n.github.io/assets/challenges.jpeg "computer vision challenging issues" )
 
-
 This tutorial will help you to get started with Deep Learning by creating your own DL environment from scratch. 
 
 ### Why Docker ?
@@ -56,17 +56,6 @@ In addition, Docker is a particularly trending technology that is worth trying, 
 All you need to get started is a Linux machine. If you do not have any, I encourage you to launch a cloud instance with **Amazon Web Service** (AWS) . Even though optimal Deep Learning environment are based on GPU architectures, using a free AWS machine is enough to get you started and adress problems of modes complexity. 
 
 This tutorial is designed for being used with **Red Hat Entreprise Linux** or **CentOS** distributions. 
-
-
-### The fast track 
-
-If all your are interested into is getting and up and running development platform, you can use the "fast track" and directly use the magic command lines : 
-
-```
-#install docker
-#pull my image
-#run my image
-```
 
 
 ## 2. Install Docker 
@@ -86,18 +75,38 @@ sudo service docker start
 sudo usermod -a -G docker ec2-user
 ```
 
+### Docker installation
+
+When adressing Deep Learning problems you will have to deal with potentially large datasets. In order to avoid duplicating your data in your container, you can use a share volume to easily read host data from any of your running container.  
+Thus, create a new directory that will be mounted as a shared volume : 
+```
+mkdir /home/share_docker
+chmod 555 /home/share_docker
+```
+
 ### Run your container
 
-First, use a docker container to build the Jupyterhub image .Run a container from a raw centos image, and then connect to the container 
+You are now ready to run your container. The `docker run` commands allows to create and run a container : 
 
 ```
-docker run --name DL_platform -dti -p 443:443 centos 
+docker run --name DL_platform -dti -p 443:443 -v /home/share_docker:/home/share_docker:z centos 
+```
+
+This needs a few comments. It is important that you understand all the argument passed to the previous command. They will help you understand all the potential of docker and adapt it to your own problems.
+* `--name`  :sets the name of your container
+* `--dti` : the -d  option is used for running the container  in the background. Using -ti allows to use an interactive terminal with your container. 
+* `-p`  : used fro  to map a port of the host to a container port. 
+* `-v` : used for sharing volumes between host and container. Notice the `:z` options that allows to pass SE linux tags from the host, solving many issues. 
+* `centos` : the last argument is the image used for creating a container. Here we run an container from a raw centos image. We will see that you can create your own docker images. 
+
+
+Your containter is now up and runing. You can have a look at all your containers with the command `docker ps -a`. If for some reason your container is not running anymore, you can start it with the command `docker start DL_platform`.
+
+You can now start a terminal in your container with the command : 
+
+```
 docker exec -it DL_platform bash
-
 ```
-
-NOTE : We will add access to a shared volume for the container for use in production. 
-
 	
 ## 3. Install Jupyterhub
 
