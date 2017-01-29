@@ -218,38 +218,46 @@ FROM centos
 MAINTAINER Robin KIPS <robin.kips@gmail.com>
 
 # install Python with Anaconda
-RUN yum -y install wget-1.14 bzip2-1.0.6 gcc-c++-4.8.5  && \
-	wget --quiet http://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O /tmp/Anaconda3-4.1.1-Linux-x86_64.sh && \
-	chmod +x /tmp/Anaconda3-4.1.1-Linux-x86_64.sh && \
-	/tmp/Anaconda3-4.1.1-Linux-x86_64.sh  -b -p /opt/anaconda && \
-	rm -f /tmp/* 
+RUN yum install -y wget-1.14 bzip2-1.0.6 gcc-c++-4.8.5  && \
+    wget --quiet http://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O /tmp/Anaconda3-4.1.1-Linux-x86_64.sh && \
+    chmod +x /tmp/Anaconda3-4.1.1-Linux-x86_64.sh && \
+    /tmp/Anaconda3-4.1.1-Linux-x86_64.sh  -b -p /opt/anaconda && \
+    rm -f /tmp/* 
 
-	# install npm, nodejs & js dependencies
+# install npm, nodejs & js dependencies
 RUN curl --silent --location https://rpm.nodesource.com/setup_4.x | bash - && \
-	yum install -y nodejs-4.6.0 && \
-	npm install -g configurable-http-proxy@1.3.0 && \ 
-	opt/anaconda/bin/pip install jupyterhub==0.6.1  && \ 
-	opt/anaconda/bin/pip install --upgrade --ignore-installed  setuptools==28.3.0 && \ 
-	opt/anaconda/bin/pip install --upgrade notebook==4.2.3 && \
-	yum install -y  openssl && \
-	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/my_key.pem -out /etc/ssl/my_cert.pem
-	
+    yum install -y nodejs-4.6.0 && \
+    npm install -g configurable-http-proxy@1.3.0 && \ 
+    opt/anaconda/bin/pip install jupyterhub==0.6.1  && \ 
+    opt/anaconda/bin/pip install --upgrade --ignore-installed  setuptools==28.3.0 && \ 
+    opt/anaconda/bin/pip install --upgrade notebook==4.2.3
+    
+#ssl setup, edit details to match your organization
+RUN yum install -y openssl && \
+	country=XX && \
+	state=XX && \
+	locality=XX && \
+	organization=XX && \
+	organizationalunit=XX && \
+	email=XX && \
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/my_key.pem -out /etc/ssl/my_cert.pem -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email"
+
 # install keras kernel
 RUN /opt/anaconda/bin/conda create --name keras_kernel python=3.5.2  -y && \
-	source /opt/anaconda/bin/activate keras_kernel && \
-	/opt/anaconda/bin/conda install  -y theano=0.8.2 && \
-	/opt/anaconda/bin/conda install -y h5py=2.6.0 && \
-	pip install keras==1.1.1 && \
-	pip install flask==0.11.1 && \
-	/opt/anaconda/bin/conda install -y scikit-learn=0.18.1 pandas=0.19.1 ipykernel=4.5.1&& matplotlib=1.5.3 pillow=3.4.1 && \
-	source /opt/anaconda/bin/deactivate 
+    source /opt/anaconda/bin/activate keras_kernel && \
+    /opt/anaconda/bin/conda install  -y theano=0.8.2 && \
+    /opt/anaconda/bin/conda install -y h5py=2.6.0 && \
+    pip install keras==1.1.1 && \
+    pip install flask==0.11.1 && \
+    /opt/anaconda/bin/conda install -y scikit-learn=0.18.1 pandas=0.19.1 ipykernel=4.5.1 matplotlib=1.5.3 pillow=3.4.1 && \
+    source /opt/anaconda/bin/deactivate 
 
 #set alias : 
 RUN echo 'alias conda="/opt/anaconda/bin/conda"' >> ~/.bashrc && \
-	echo 'alias activate="/opt/anaconda/bin/activate"' >> ~/.bashrc && \
-	echo 'alias deactivate="/opt/anaconda/bin/deactivate"' >> ~/.bashrc && \
-	echo 'alias python_keras="/opt/anaconda/envs/keras_kernel/bin/python3"' >> ~/.bashrc && \
-	echo 'alias jupyterhub="/opt/anaconda/bin/jupyterhub"' >> ~/.bashrc 
+    echo 'alias activate="/opt/anaconda/bin/activate"' >> ~/.bashrc && \
+    echo 'alias deactivate="/opt/anaconda/bin/deactivate"' >> ~/.bashrc && \
+    echo 'alias python_keras="/opt/anaconda/envs/keras_kernel/bin/python3"' >> ~/.bashrc && \
+    echo 'alias jupyterhub="/opt/anaconda/bin/jupyterhub"' >> ~/.bashrc 
 
 #set ENV
 ENV KERAS_BACKEND=theano
@@ -262,8 +270,8 @@ RUN mkdir -p /srv/jupyterhub/ && \
     echo "c.Spawner.notebook_dir = '/home/'" >> jupyterhub_config.py
 
 WORKDIR /srv/jupyterhub/
-EXPOSE 8000
- 
+EXPOSE 443
+
 #start jupyterhub 
-CMD ["jupyterhub","--port 443", "--ssl-key", "/etc/ssl/my_key.pem", "--ssl-cert", "/etc/ssl/my_cert.pem", "-f", "jupyterhub_config.py"]
+CMD ["jupyterhub","--port", "443", "--ssl-key", "/etc/ssl/my_key.pem", "--ssl-cert", "/etc/ssl/my_cert.pem", "-f", "jupyterhub_config.py"]
 ```
