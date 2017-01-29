@@ -75,7 +75,7 @@ sudo service docker start
 sudo usermod -a -G docker ec2-user
 ```
 
-### Docker installation
+### Other prerequisite : sharing data and ports
 
 When adressing Deep Learning problems you will have to deal with potentially large datasets. In order to avoid duplicating your data in your container, you can use a share volume to easily read host data from any of your running container.  
 Thus, create a new directory that will be mounted as a shared volume : 
@@ -83,13 +83,18 @@ Thus, create a new directory that will be mounted as a shared volume :
 mkdir /home/share_docker
 chmod 555 /home/share_docker
 ```
+In addition, you must open a port on your server in order to access your future development platform. Open the port 8000 using : 
+```
+sudo firewall-cmd --zone=public --add-port=8000/tcp --permanent
+sudo firewall-cmd --reload
+```
 
 ### Run your container
 
 You are now ready to run your container. The `docker run` commands allows to create and run a container : 
 
 ```
-docker run --name DL_platform -dti -p 443:443 -v /home/share_docker:/home/share_docker:z centos 
+docker run --name DL_platform -dti -p 8000:8000 -v /home/share_docker:/home/share_docker:z centos 
 ```
 
 This needs a few comments. It is important that you understand all the argument passed to the previous command. They will help you understand all the potential of docker and adapt it to your own problems.
@@ -107,23 +112,25 @@ You can now start a terminal in your container with the command :
 ```
 docker exec -it DL_platform bash
 ```
-	
+
 ## 3. Install Jupyterhub
 
+Now that our container is up and running start by installing Jupyterub. 
 
+### What is Jupyterhub ? 
 
-
+The **Jupyter** is a web application that allows you to create and share documents that contain live code, equations, visualizations and explanatory text. Using **Jupyterhub** allows you to run a multi user Jupyter server.
+A very usefull feature of Jupyter is the use of **kernels**. They can be considered as isolated virtual environement in which you can execute several language programming. Thus, you can create a kernel for your Python 3 scripts, and another for your R or Julia script. 
 
 ### Anaconda installation 
 
+For installing Jupyter and creating python environment we will use the very popular **Anaconda** python distribution
 Install several compenents for later needs : 
-
 ```
 yum update -y  
-yum  install -y wget bzip2
+yum  install -y wget bzip2 git
 ```
-
-Install Anaconda. Contains Python 3, advanced python environment manager, and all the most popular data science libraries. 
+Download and install Anaconda.
 
 ```
 #download Anaconda
@@ -135,16 +142,15 @@ chmod +x /tmp/Anaconda3-4.1.1-Linux-x86_64.sh
 #cleanup
 rm -f /tmp/*
 ```
-
-Add anaconda binaries repository to yhour path. All the user that want to use anaconda must do so. 
+Add anaconda binaries repository to your path : 
 ```
 echo 'PATH=$PATH:/opt/anaconda/bin' >> ~/.bashrc
 ```
 
 ### Jupyterhub installation 
 #### prerequisite installations
-
-First install **nodejs/npm** (Node Package Manager). For RHEL, Node.js is available from the NodeSource Enterprise Linux and Fedora binary distributions repository. 
+;
+Install **nodejs/npm** (Node Package Manager)
 ```
 curl --silent --location https://rpm.nodesource.com/setup_4.x | bash -
 yum install -y nodejs
@@ -160,44 +166,20 @@ Install jupyterhub
 ```
 /opt/anaconda/bin/pip install jupyterhub
 ```
-
 Then we must upgrade the jupyter notebook. There is a small workarround here in order to avoid a bug in upgrading python setuptools using anaconda pip. Using the `--ignore-installed` argument we ignore the installed package  and force the  reinstalling instead. 
 ```
 opt/anaconda/bin/pip install --upgrade --ignore-installed  setuptools
-```
-
-You can now safely upgrade the notebook : 
-```
 opt/anaconda/bin/pip install --upgrade notebook
 ```
+## Start Jupyterhub 
 
-Setup an alias for jupyterhub binaries . Add the following line to ` /root/.bashrc`
-
+You can now start your Jupyterhub server with the following command line : 
 ```
-echo 'alias jupyterhub="/opt/anaconda/bin/jupyterhub"' >> ~/.bashrc 
+/opt/anaconda/bin/jupyterhub --no-ssl
 ```
+By default, the Jupyterhub server is configured on port 8000. You can access it from `http://yourdomainname:8000` and must login with a unix acount existing in the container. You can create new accounts with the `useradd myuser` command and edit the password with `passwd myuser`. 
 
-### 2.2. Configuring Jupyterhub  : 
-
-
-Generate default configuration file for Jupyterhub in `/etc/jupyterhub/'
-
-```
-mkdir /etc/jupyterhub 
-cd /etc/jupyterhub 
-jupyterhub --generate-config
-
-yum install -y  openssl
-#autisigned certificate
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/my_key.pem -out /etc/ssl/my_cert.pem
-```
-
-You can start the jupyterhub server with the following command :  
-
-```
-jupyterhub --port 443 --ssl-key /etc/ssl/my_key.pem --ssl-cert /etc/ssl/my_cert.pem
-```
-the jupyterhub server should now start to listen on the port 443 of your container. Check that this port is indeed binded to the host. 
+![alt text](https://nb4799.neu.edu/wordpress/wp-content/uploads/2015/05/787.png)
 
 ## Installing keras kernel : 
 
